@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Profile: {{ user.short_name }}</h1>
+
+  <h2>Details</h2>
+  <ul>
+    <li>Full name: {{ user.full_name }}</li>
+    <li>Joined: {{ user.date_joined }}</li>
+    <li>Last login: {{ user.last_login }}</li>
+    {% if request.user == user or perms.user.can_change %}
+      <li>Email: {{ user.email }}</li>
+      <li><a href="{% url 'users:update' user.id %}">Update profile</a></li>
+    {% endif %}
+  </ul>
+
+  <h2>Friends</h2>
+  <ul>
+    {% for friend in user.get_friends %}
+      <li>
+        <a href="{{ friend.get_absolute_url }}">{{ friend }}</a>
+      </li>
+    {% empty %}
+      <li>No friends founds</li>
+    {% endfor %}
+  </ul>
+
+  {% if request.user == user %}
+    <h2>Invitations</h2>
+    <ul>
+      {% for invitation in user.get_pending_invitations %}
+        <li>{{ invitation.from_user }} [<a href="{% url 'users:accept' invitation.id %}">Accept</a>]</li>
+      {% empty %}
+        <li>No invitations</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock content %}

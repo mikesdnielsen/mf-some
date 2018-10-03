@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% for post in posts %}
+    <p><a href="{% url 'posts:detail' post.pk %}"> {{ post.created_at }} by {{ post.author.full_name }}</a></p>
+    <p>Likes: {{ post.likes_sum|default:"0" }}</p>
+    <hr>
+  {% empty %}
+    <p>No posts yet.</p>
+  {% endfor %}
+{% endblock content %}
+
+{% block javascript %}
+  <script>
+    var post_id = {{ post.pk }}
+    var likeSocket = new WebSocket(
+      'ws://' + window.location.host +
+      '/ws/like/' + post_id
+    )
+  </script>
+{% endblock javascript %}

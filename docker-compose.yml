@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+    postgresql:
+        build: ./compose/postgresql
+        networks:
+            - mf-some
+    redis:
+        build: ./compose/redis
+        networks:
+          - mf-some
+    django:
+        build:
+            context: .
+            dockerfile: ./compose/django/Dockerfile
+        volumes:
+            - ./mf_some/:/code
+        ports:
+            - "5000:5000"
+        command: /start-dev.sh
+        depends_on:
+            - postgresql
+            - redis
+        networks:
+            - mf-some
+
+networks:
+    mf-some:
+        driver: bridge

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Post by {{ post.author }}</h1>
+  <p>{{ post.text }}</p>
+  <p>Likes: <span id="like_counter">{{ posts.likes.count|default:"0" }}</span> |
+    <button data-post="{{ post.pk }}" id="like_button" class="btn btn-sm btn-primary">Like</button>
+  </p>
+{% endblock content %}
+
+{% block javascript %}
+  <script>
+    var post_id = {{ post.id }};
+    var likeSocket = new WebSocket(
+      'ws://' + window.location.host +
+      '/ws/likes/' + post_id + '/'
+    );
+
+    likeSocket.onmessage = function(e) {
+      var data = JSON.parse(e.data);
+      var likes = data['message'];
+      document.querySelector('#like_counter').textContent = likes;
+    };
+
+    document.querySelector("#like_button").onclick = function(e) {
+      var post_button = document.querySelector('#like_button');
+      var post_id = post_button.getAttribute('data-post');
+      likeSocket.send(JSON.stringify({
+        'message': 'liked'
+      }));
+    }
+
+
+  </script>
+{% endblock javascript %}
