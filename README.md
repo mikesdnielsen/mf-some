@@ -5,6 +5,7 @@ The Social Network Test
 Use docker-compose and run
 
 `docker-compose build`
+
 `docker-compose up`
 
 After this, the site is avaiable on https://localhost:5000/
